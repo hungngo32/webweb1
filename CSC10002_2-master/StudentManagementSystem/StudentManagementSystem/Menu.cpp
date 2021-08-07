@@ -1,4 +1,35 @@
-﻿#include "Menu.h"
+﻿#include"Menu.h"
+#include"Staff.h"
+//co can include Lectuter voi Student ko 
+void changePassword(Account& acc)
+{
+	string newPassword[2], curPassword;
+
+	cout << "Password length: 8 <= length <= 40" << endl;
+
+	cout << "Enter current password: ";
+	curPassword = getInputPassword();
+
+	cout << "Enter new password: ";
+	newPassword[0] = getInputPassword();
+
+	cout << "Enter new password again: ";
+	newPassword[1] = getInputPassword();
+
+	if (acc.password == curPassword) {
+		if (newPassword[0] == newPassword[1]) {
+			acc.password = newPassword[0];
+			cout << "==> Password was successfully changed." << endl;
+		}
+		else cout << "The two new passwords are not the same." << endl;
+	}
+	else cout << "The current password is incorrect." << endl;
+}
+void viewLecturerInfo(Lecturer lec)
+{
+	viewGeneralInfo(lec.info);
+	cout << "- Degree: " << lec.degree << endl << endl;
+}
 
 bool checkAcademicYearAndSemester(string academicYear, string semester)
 {
@@ -33,63 +64,651 @@ bool checkAcademicYearAndSemester(string academicYear, string semester)
 
 	return false;
 }
-
-bool checkStaff(Staff& s)
+int getChoice(const int& minValue, const int& maxValue)
 {
-	string staffFilePath;
-	Staff* staffList = nullptr;
-	int countStaff;
-	bool flag = false;
+	int choice = 0;
+	bool check;
 
-	staffFilePath = PATH_DATA;
-	staffFilePath += "Staff.txt";
-	if (loadListStaffs(staffFilePath, staffList, countStaff))
+	do
 	{
-		for (int i = 0; i < countStaff; i++)
+		check = true;
+
+		cout << "Enter your choice: ";
+		cin >> choice;
+
+		if (choice < minValue || maxValue < choice) {
+			check = false;
+			cout << "Invalid!!. Please enter again." << endl;
+		}
+	} while (check == false);
+
+	return choice;
+}
+void showMenuOfClass()
+{
+	int choice;
+
+	system("cls");
+
+	while (true)
+	{
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "|                      CLASS                      |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| No |                   Option                   |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 1  | Import students of a class from a csv file |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 2  | Add a new student to a class               |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 3  | Create Class                               |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 4  | View list of students in a class           |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 5  | View list of classes                       |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 6  | Return to previous menu                    |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+
+		choice = getChoice(1, 6);
+
+		system("cls");
+
+		switch (choice)
 		{
-			if (staffList[i].info.acc.username == s.info.acc.username)
-				if (staffList[i].info.acc.password == s.info.acc.password)
-				{
-					s = staffList[i];
-					flag = true;
-					break;
-				}
+		case 1:
+			cin.ignore();
+			importClass();
+			break;
+		case 2:
+			addNewStudent();
+			break;
+		case 3:
+			createClass();
+			break;
+		case 4:
+			viewStudentsOfClass();
+			break;
+		case 5:
+			viewClassList();
+			break;
+		case 6:
+			return;
+		}
+		system("pause");
+		system("cls");
+	}
+}
+//void showSubMenuOfStaff(Staff& staff, const string& academicYear, const string& semester) {
+//	system("cls");
+//	int choice;
+//
+//	while (true)
+//	{
+//		system("cls");
+//		cout << "|------------------------------|" << endl;
+//		cout << "|             STAFF            |" << endl;
+//		cout << "|------------------------------|" << endl;
+//		cout << "| No |         Option          |" << endl;
+//		cout << "|------------------------------|" << endl;
+//		cout << "| 1  | Course                  |" << endl;
+//		cout << "|------------------------------|" << endl;
+//		cout << "| 2  | Return to previous menu |" << endl;
+//		cout << "|------------------------------|" << endl;
+//
+//		choice = getChoice(1, 4);
+//
+//		switch (choice)
+//		{
+//		case 1:
+//			showMenuOfCourse(academicYear, semester);
+//			break;
+//		case 2:
+//			return;
+//		}
+//	}
+//}
+//Option for Staff
+void showMenuOfCourse(const string& academicYear, const string& semester)
+{
+	int choice;
+
+	while (true)
+	{
+		system("cls");
+
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "|                               COURSE                              |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| No |                          Option                              |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| 1  | Create / view academic years, and semesters                  |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| 2  | Add a new course                                             |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| 3  | Update course                                                |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| 4  | Remove a course                                              |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| 5  | View list of courses in the current semester                 |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| 6  | View list of students of a course                            |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+		cout << "| 7  | Return to previous menu                                      |" << endl;
+		cout << "|-------------------------------------------------------------------|" << endl;
+
+		choice = getChoice(1, 8);
+
+		system("cls");
+
+		switch (choice)
+		{
+		case 1:
+			showFunctionsOfAcademicYearAndSemester();
+			break;
+		case 2:
+			addNewCourse(academicYear, semester);
+			break;
+		case 3:
+			editAnExistingCourse(academicYear, semester);
+			break;
+		case 4:
+			removeCourse(academicYear, semester);
+			break;
+		case 5:
+			viewListCourses(academicYear, semester);
+			break;
+		case 6:
+			viewListStudentsOfCourse(academicYear, semester);
+			break;
+		case 7:
+			return;
 		}
 
-		delete[] staffList;
+		system("pause");
 	}
-
-	return flag;
 }
-
-bool checkLecturer(Lecturer& lec)
+void showMenuOfAttendanceList(const string& academicYear, const string& semester)
 {
-	string lectFilePath;
-	Lecturer* lecturerList = nullptr;
-	int countLect = 0;
-	bool flag = false;
+	int choice;
 
-	lectFilePath = PATH_DATA;
-	lectFilePath += "Lecturer.txt";
-	if (loadListLecturers(lectFilePath, lecturerList, countLect))
+	while (true)
 	{
-		for (int i = 0; i < countLect; i++)
+		system("cls");
+
+		cout << "|--------------------------------------------------|" << endl;
+		cout << "|                  ATTENDANCE LIST                 |" << endl;
+		cout << "|--------------------------------------------------|" << endl;
+		cout << "| No |                    Option                   |" << endl;
+		cout << "|--------------------------------------------------|" << endl;
+		cout << "| 1  | Search and view attendance list of a course |" << endl;
+		cout << "|--------------------------------------------------|" << endl;
+		cout << "| 2  | Export a attendance list to a csv file      |" << endl;
+		cout << "|--------------------------------------------------|" << endl;
+		cout << "| 3  | Return to previous menu                     |" << endl;
+		cout << "|--------------------------------------------------|" << endl;
+
+		choice = getChoice(1, 3);
+
+		system("cls");
+
+		switch (choice)
 		{
-			if (lecturerList[i].info.acc.username == lec.info.acc.username)
-				if (lecturerList[i].info.acc.password == lec.info.acc.password)
-				{
-					lec = lecturerList[i];
-					flag = true;
-					break;
-				}
+		case 1:
+			viewAttendanceListOfCourse(academicYear, semester);
+			break;
+		case 2:
+			ExportAttendanceListToCsv(academicYear, semester);
+			break;
+		case 3:
+			return;
 		}
 
-		delete[] lecturerList;
+		system("pause");
 	}
+}
+void showMenuOfScoreboard(const string& academicYear, const string& semester)
+{
+	int choice;
 
-	return flag;
+	while (true)
+	{
+		system("cls");
+
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "|                    SCOREBOARD                   |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| No |                  Option                    |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 1  | Search and view the scoreboard of a course |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 2  | Export a scoreboard to a csv file          |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+		cout << "| 3  | Return to previous menu                    |" << endl;
+		cout << "|-------------------------------------------------|" << endl;
+
+		choice = getChoice(1, 3);
+
+		system("cls");
+
+		switch (choice)
+		{
+		case 1:
+			viewScoreboardOfCourse(academicYear, semester);
+			break;
+		case 2:
+			ExportScoreboardToCsv(academicYear, semester);
+			break;
+		case 3:
+			return;
+		}
+
+		system("pause");
+	}
 }
 
+//void showMenuOfScoreboard(const string& academicYear, const string& semester)
+//{
+//	int choice;
+//
+//	while (true)
+//	{
+//		system("cls");
+//
+//		cout << "|-------------------------------------------------|" << endl;
+//		cout << "|                    SCOREBOARD                   |" << endl;
+//		cout << "|-------------------------------------------------|" << endl;
+//		cout << "| No |                  Option                    |" << endl;
+//		cout << "|-------------------------------------------------|" << endl;
+//		cout << "| 1  | Search and view the scoreboard of a course |" << endl;
+//		cout << "|-------------------------------------------------|" << endl;
+//		cout << "| 2  | Export a scoreboard to a csv file          |" << endl;
+//		cout << "|-------------------------------------------------|" << endl;
+//		cout << "| 3  | Return to previous menu                    |" << endl;
+//		cout << "|-------------------------------------------------|" << endl;
+//
+//		choice = getChoice(1, 3);
+//
+//		system("cls");
+//
+//		switch (choice)
+//		{
+//		case 1:
+//			viewScoreboardOfCourse(academicYear, semester);
+//			break;
+//		case 2:
+//			ExportScoreboardToCsv(academicYear, semester);
+//			break;
+//		case 3:
+//			return;
+//		}
+//
+//		system("pause");
+//	}
+//}
+
+//void showMenuOfAttendanceList(const string& academicYear, const string& semester)
+//{
+//	int choice;
+//
+//	while (true)
+//	{
+//		system("cls");
+//
+//		cout << "|--------------------------------------------------|" << endl;
+//		cout << "|                  ATTENDANCE LIST                 |" << endl;
+//		cout << "|--------------------------------------------------|" << endl;
+//		cout << "| No |                    Option                   |" << endl;
+//		cout << "|--------------------------------------------------|" << endl;
+//		cout << "| 1  | Search and view attendance list of a course |" << endl;
+//		cout << "|--------------------------------------------------|" << endl;
+//		cout << "| 2  | Export a attendance list to a csv file      |" << endl;
+//		cout << "|--------------------------------------------------|" << endl;
+//		cout << "| 3  | Return to previous menu                     |" << endl;
+//		cout << "|--------------------------------------------------|" << endl;
+//
+//		choice = getChoice(1, 3);
+//
+//		system("cls");
+//
+//		switch (choice)
+//		{
+//		case 1:
+//			viewAttendanceListOfCourse(academicYear, semester);
+//			break;
+//		case 2:
+//			ExportAttendanceListToCsv(academicYear, semester);
+//			break;
+//		case 3:
+//			return;
+//		}
+//
+//		system("pause");
+//	}
+//}
+//Staff
+void viewGeneralInfo(GeneralInformation info)
+{
+	cout << "\n- Full name: " << info.fullName << endl;
+	cout << "- Gender: " << ((info.gender == MALE) ? ("Male") : ("Female")) << endl;
+}
+
+void viewStaffInfo(Staff s)
+{
+	viewGeneralInfo(s.info);
+	cout << endl;
+}
+//
+void showMenuOfStaff(Staff& staff)
+{
+	system("cls");
+	Lecturer lec;
+	string academicYear, semester, filePath = PATH_DATA;
+	Staff* listStaffs = nullptr;
+	int choice, countStaff = 0, idx;
+
+	filePath += "Staff.txt";
+
+	while (true)
+	{
+		system("cls");
+		cout << "|------------------------------------------------|" << endl;
+		cout << "|                     STAFF                      |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| No |      Option                               |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 1  | Class                                     |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 2  | Create academic year and semester         |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 3  | Enter existing academic year and semester |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 4  | Scoreboards                               |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 5  | Attendance list                           |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 6  | For input of lecturer                     |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 7  | View profile info                         |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 8  | Change password                           |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+		cout << "| 9  | Log out                                   |" << endl;
+		cout << "|------------------------------------------------|" << endl;
+
+		choice = getChoice(1, 9);
+
+		system("cls");
+
+		switch (choice)
+		{
+		case 1:
+			showMenuOfClass();
+			break;
+		case 2:
+			cin.ignore();
+			createAcademicYearsAndSemester();
+			//showSubMenuOfStaff(staff, academicYear, semester);
+			showMenuOfCourse(academicYear, semester);
+			break;
+		case 3:
+			cin.ignore();
+			getInputAcademicYearAndSemester(academicYear, semester);
+			//showSubMenuOfStaff(staff, academicYear, semester);
+			showMenuOfCourse(academicYear, semester);
+			break;
+		case 4:
+			showMenuOfScoreboard(academicYear, semester);
+			break;
+		case 5:
+			showMenuOfAttendanceList(academicYear, semester);
+			break;
+		case 6:
+		{
+			string name;
+			cin.ignore();
+			cout << "Enter lecturer's name: ";
+			getline(cin, lec.info.fullName);
+			cout << "\nEnter ID: ";
+			getline(cin, lec.info.acc.password);
+			if (checkLecturer(lec)) {
+				showMenuOfLecturer(lec);
+			}
+			system("pause");
+			break;
+		}
+		case 7:
+			viewStaffInfo(staff);
+			system("pause");
+			break;
+		case 8:
+			cin.ignore();
+			changePassword(staff.info.acc);
+
+			if (loadListStaffs(filePath, listStaffs, countStaff)) {
+				idx = findValue(listStaffs, countStaff, sizeof(Staff), &staff, isEqualStaff);
+				listStaffs[idx].info.acc.password = staff.info.acc.password;
+
+				saveListStaffs(filePath, listStaffs, countStaff);
+				delete[] listStaffs;
+				listStaffs = nullptr;
+			}
+
+			system("pause");
+			break;
+		case 9:
+			showMenu();
+			return;
+		}
+	}
+}
+void viewStudentInfo(Student st)
+{
+	viewGeneralInfo(st.info);
+	cout << "- Student ID: " << st.id << endl;
+	cout << "- Date of birth: " << st.dateOfBirth << endl;
+	cout << "- Status: " << ((st.status) ? ("Available") : ("Expelled")) << endl << endl;
+}
+
+void showMenuOfLecturer(Lecturer& lec)
+{
+	string academicYear, semester, filePath = PATH_DATA;
+	Lecturer* listLecturers = nullptr;
+	int choice, countLecturer = 0;
+
+	filePath += "Lecturer.txt";
+
+	system("cls");
+	getInputAcademicYearAndSemester(academicYear, semester);
+
+	while (true)
+	{
+		system("cls");
+
+		cout << "|----------------------------------------------------|" << endl;
+		cout << "|                      STAFF-2                       |" << endl;
+		cout << "|----------------------------------------------------|" << endl;
+		cout << "| No |                   Option                      |" << endl;
+		cout << "|----------------------------------------------------|" << endl;
+		cout << "| 1  | Import scoreboard of a course from a csv file |" << endl;//done
+		cout << "|----------------------------------------------------|" << endl;
+		cout << "| 2  | Edit grade of a student                       |" << endl;//done
+		cout << "|----------------------------------------------------|" << endl;
+		cout << "| 3  | View a scoreboard                             |" << endl;//done
+		cout << "|----------------------------------------------------|" << endl;
+		cout << "| 4  | View profile info                             |" << endl;//done
+		cout << "|----------------------------------------------------|" << endl;
+		cout << "| 5  | Return                                         |" << endl;
+		cout << "|----------------------------------------------------|" << endl;
+
+		choice = getChoice(1, 7);
+
+		system("cls");
+
+		switch (choice)
+		{
+		case 1:
+			importScoreboardsOfCourse(academicYear, semester, lec);
+			break;
+		case 2:
+			editGradeStudent(academicYear, semester, lec);
+			break;
+		case 3:
+			viewScoreboardOfCourse(academicYear, semester, lec);
+			break;
+		case 4:
+			viewLecturerInfo(lec);
+			break;
+		case 5:
+			showMenu();
+			return;
+		}
+		system("pause");
+	}
+}
+void addNewStudent2(Student st)
+{
+	string filePathStudent, ClassName;
+	Student* listStudents = nullptr, newStudent;
+	int countStudent(0);
+
+	ClassName = getInputClassName();
+	filePathStudent = createClassDirectoryWithFileName(ClassName);
+
+	if (!loadStudentList(filePathStudent, listStudents, countStudent))
+	{
+		cout << "Can not open student file." << endl;
+		return;
+	}
+
+	newStudent = st;
+	listStudents = (Student*)pushBackArray(listStudents, countStudent, sizeof(Student),
+		&newStudent, allocListStudents, copyStudent, releaseListStudents);
+
+	if (saveStudentList(filePathStudent, listStudents, countStudent))
+		cout << "Enroll successfully." << endl;
+	else
+		cout << "Fail!!! " << endl;
+
+	delete[] listStudents;
+}
+void viewSchedule2(const string& academicYear, const string& semester, const Student& st)
+{
+	cout << "|" << setfill('-') << setw(129) << "-" << "|" << endl;
+	cout << setfill(' ');
+	fstream f;
+	string filePath = "";
+	filePath += st.id;
+	cout << "| " << setw(5) << left << "  No" << " | " << setw(50) << left << "Course name" << " | "
+		<< setw(15) << left << "Course ID" << " | " << setw(10) << left << "Class name" << " | "
+		<< setw(4) << left << "Room" << " | " << setw(12) << left << "   Day" << " | "
+		<< setw(13) << left << "    Time" << " |" << endl;
+
+	cout << "|" << setfill('-') << setw(129) << "-" << "|" << endl;
+	cout << setfill(' ');
+
+	int count = 0;
+	Schedule* listSchedule = getScheduleOfStudent(academicYear, semester, st, count);
+
+	if (listSchedule != nullptr) {
+		for (int i = 0; i < count; i++) {
+			string dayString = convertWeekdayNumberToString(listSchedule[i].dayOfWeek);
+
+			cout << "| " << setw(3) << right << i + 1 << "   | " << setw(50) << left << listSchedule[i].courseName
+				<< " | " << setw(15) << left << listSchedule[i].courseId << " |   " << setw(8) << left << listSchedule[i].ClassName
+				<< " | " << setw(4) << left << listSchedule[i].room << " |  " << setw(11) << left << dayString
+				<< " | " << setw(2) << right << listSchedule[i].startTime.hour << ":" << setw(2) << left << listSchedule[i].startTime.minute
+				<< " - " << setw(2) << right << listSchedule[i].endTime.hour << ":" << setw(2) << left << listSchedule[i].endTime.minute
+				<< " |" << endl;
+
+			cout << "|" << setfill('-') << setw(129) << "-" << "|" << endl;
+			cout << setfill(' ');
+		}
+		getChoice(1, count);
+		addNewStudent2(st);
+		delete[] listSchedule;
+	}
+}
+void showMenuOfStudent(Student& st)
+{
+	string academicYear, semester, filePath;
+	Student* listStudents = nullptr;
+	int choice, countStudent = 0;
+
+	filePath = createClassDirectoryWithFileName(st.ClassName);
+
+	system("cls");
+	getInputAcademicYearAndSemester(academicYear, semester);
+	while (true)
+	{
+		system("cls");
+
+		cout << "|--------------------------------------|" << endl;
+		cout << "|                STUDENT               |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| No |             Option              |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| 1  | Enroll                          |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| 2  | View enrolling result           |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| 3  | Remove course                   |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| 4  | View his/her scores of a course |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| 5  | View profile info               |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| 6  | Change password                 |" << endl;
+		cout << "|--------------------------------------|" << endl;
+		cout << "| 7  | Log out                         |" << endl;
+		cout << "|--------------------------------------|" << endl;
+
+		choice = getChoice(1, 7);
+
+		system("cls");
+
+		switch (choice)
+		{
+		case 1:
+			cin.ignore();
+			viewSchedule2(academicYear, semester, st);
+			break;
+		case 2:
+			cin.ignore();
+			//viewCheckInResult(academicYear, semester, st);
+			viewSchedule(academicYear, semester, st);
+			break;
+		case 3:
+			removeCourse(academicYear, semester);
+			break;
+		case 4:
+			viewScores(academicYear, semester, st);
+			break;
+		case 5:
+			viewStudentInfo(st);
+			break;
+		case 6:
+			cin.ignore();
+			changePassword(st.info.acc);
+
+			if (loadStudentList(filePath, listStudents, countStudent)) {
+				int idx = findValue(listStudents, countStudent, sizeof(Student), &st, isEqualStudentId);
+				listStudents[idx].info.acc.password = st.info.acc.password;
+
+				saveStudentList(filePath, listStudents, countStudent);
+				delete[] listStudents;
+				listStudents = nullptr;
+			}
+
+			break;
+		case 7:
+			showMenu();
+			return;
+		}
+
+		system("pause");
+	}
+}
 bool checkStudentForLogin(Student& st)
 {
 	string classPath, * className, listClassPath = "";
@@ -130,7 +749,88 @@ bool checkStudentForLogin(Student& st)
 
 	return flag;
 }
+bool checkStaff(Staff& s)
+{
+	string staffFilePath;
+	Staff* staffList = nullptr;
+	int countStaff;
+	bool flag = false;
 
+	staffFilePath = PATH_DATA;
+	staffFilePath += "Staff.txt";
+	if (loadListStaffs(staffFilePath, staffList, countStaff))
+	{
+		for (int i = 0; i < countStaff; i++)
+		{
+			if (staffList[i].info.acc.username == s.info.acc.username)
+				if (staffList[i].info.acc.password == s.info.acc.password)
+				{
+					s = staffList[i];
+					flag = true;
+					break;
+				}
+		}
+
+		delete[] staffList;
+	}
+
+	return flag;
+}
+bool checkLecturer(Lecturer& lec)
+{
+	string lectFilePath;
+	Lecturer* lecturerList = nullptr;
+	int countLect = 0;
+	bool flag = false;
+
+	lectFilePath = PATH_DATA;
+	lectFilePath += "Lecturer.txt";
+	if (loadListLecturers(lectFilePath, lecturerList, countLect))
+	{
+		for (int i = 0; i < countLect; i++)
+		{
+			if (lecturerList[i].info.fullName == lec.info.fullName)
+				if (lecturerList[i].info.acc.password == lec.info.acc.password)
+				{
+					lec = lecturerList[i];
+					flag = true;
+					break;
+				}
+		}
+
+		delete[] lecturerList;
+	}
+
+	return flag;
+}
+void loadStaff(ifstream& fin, Staff& s)
+{
+	getline(fin, s.info.acc.username);
+	getline(fin, s.info.acc.password);
+	getline(fin, s.info.fullName);
+	fin >> s.info.gender;
+}
+bool loadListStaffs(const string& filePath, Staff*& listStaffs, int& countStaff)
+{
+	ifstream fin(filePath);
+
+	if (!fin.is_open())
+		return false;
+
+	fin >> countStaff;
+	fin.ignore();
+	listStaffs = new Staff[countStaff];
+
+	for (int i = 0; i < countStaff; i++)
+	{
+		loadStaff(fin, listStaffs[i]);
+		fin.ignore();
+	}
+
+	fin.close();
+	return true;
+}
+//Enter&&Update Academic Year and Semester
 void getInputAcademicYearAndSemester(string& academicYear, string& semester)
 {
 	bool flag;
@@ -153,96 +853,32 @@ void getInputAcademicYearAndSemester(string& academicYear, string& semester)
 
 	} while (!flag);
 }
-
-void* login(short& role)
+//
+bool login(short role, Staff& s, Student& st)
 {
 	Account log;
-	Staff s;
-	Student st;
-	Lecturer lec;
 	void* info = nullptr;
-	role = 0;
-
 	cout << "Login. Please enter these information." << endl;
 	cout << "Username: ";
 	getline(cin, log.username);
 	cout << "Password (8 <= length <= 40): ";
-	log.password = getInputPassword();//sua 1
+	getline(cin, log.password);
 
 	s.info.acc = log;
-	lec.info.acc = log;
 	st.info.acc = log;
 
-	if (checkStaff(s)) {
-		role = 1;
-		info = new Staff;
-		*(Staff*)info = s;
+	if (checkStaff(s) == true && role == 1) {
+		return true;
 	}
-	else if (checkLecturer(lec)) {
-		role = 2;
-		info = new Lecturer;
-		*(Lecturer*)info = lec;
-	}
-	else if (checkStudentForLogin(st)) {
-		role = 3;
-		info = new Student;
-		*(Student*)info = st;
+	else if (checkStudentForLogin(st) && role == 2) {
+		/*	role = 3;
+			info = new Student;
+			*(Student*)info = st;*/
+		return true;
 	}
 
-	return info;
+	return false;
 }
-
-void changePassword(Account& acc)
-{
-	string newPassword[2], curPassword;
-
-	cout << "Password length: 8 <= length <= 40" << endl;
-
-	cout << "Enter current password: ";
-	curPassword = getInputPassword();
-
-	cout << "Enter new password: ";
-	newPassword[0] = getInputPassword();
-
-	cout << "Enter new password again: ";
-	newPassword[1] = getInputPassword();
-
-	if (acc.password == curPassword) {
-		if (newPassword[0] == newPassword[1]) {
-			acc.password = newPassword[0];
-			cout << "==> Password was successfully changed." << endl;
-		}
-		else cout << "The two new passwords are not the same." << endl;
-	}
-	else cout << "The current password is incorrect." << endl;
-}
-
-void viewGeneralInfo(GeneralInformation info)
-{
-	cout << "\n- Full name: " << info.fullName << endl;
-	cout << "- Gender: " << ((info.gender == MALE) ? ("Male") : ("Female")) << endl;
-}
-
-void viewStaffInfo(Staff s)
-{
-	viewGeneralInfo(s.info);
-	cout << endl;
-}
-
-void viewStudentInfo(Student st)
-{
-	viewGeneralInfo(st.info);
-	cout << "- Student ID: " << st.id << endl;
-	cout << "- Date of birth: " << st.dateOfBirth << endl;
-	cout << "- Status: " << ((st.status) ? ("Available") : ("Expelled")) << endl << endl;
-}
-
-void viewLecturerInfo(Lecturer lec)
-{
-	viewGeneralInfo(lec.info);
-	cout << "- Degree: " << lec.degree << endl << endl;
-}
-
 void showMenu()
 {
 	short role;
@@ -272,566 +908,39 @@ void showMenu()
 		case 1:
 			system("cls");
 			cin.ignore();
-			info = login(role);
-
-			switch (role)
-			{
-			case 1:
-				s = *(Staff*)info;
-				delete info;
-				info = nullptr;
-
-				showMenuOfStaff(s);
-				break;
-			case 2:
-				lec = *(Lecturer*)info;
-				delete info;
-				info = nullptr;
-
-				showMenuOfLecturer(lec);
-				break;
-			case 3:
-				st = *(Student*)info;
-				delete info;
-				info = nullptr;
-
-				showMenuOfStudent(st);
-				break;
-			default:
-				cout << "Can't find account" << endl;
-				break;
+			cout << "|------------------------|" << endl;
+			cout << "|          Role          |" << endl;
+			cout << "|------------------------|" << endl;
+			cout << "| No |      Option       |" << endl;
+			cout << "|------------------------|" << endl;
+			cout << "| 1  | Staff             |" << endl;
+			cout << "|------------------------|" << endl;
+			cout << "| 2  | Student           |" << endl;
+			cout << "|------------------------|" << endl;
+			cout << "\nBan la: ";
+			cin >> role;
+			cin.ignore();
+			if (login(role, s, st)) {
+				switch (role)
+				{
+				case 1:
+					showMenuOfStaff(s);
+					break;
+				case 2:
+					showMenuOfStudent(st);
+					break;
+				default:
+					cout << "Can't find account" << endl;
+					break;
+				}
+			}
+			else {
+				cout << "\nFAILED";
 			}
 
-			break;
 		case 2:
 			system("pause");
 			exit(0);
-		}
-
-		system("pause");
-	}
-}
-
-void showSubMenuOfStaff(Staff& staff, const string& academicYear, const string& semester) {
-	system("cls");
-	int choice;
-
-	while (true)
-	{
-		system("cls");
-		cout << "|------------------------------|" << endl;
-		cout << "|             STAFF            |" << endl;
-		cout << "|------------------------------|" << endl;
-		cout << "| No |         Option          |" << endl;
-		cout << "|------------------------------|" << endl;
-		cout << "| 1  | Course                  |" << endl;
-		cout << "|------------------------------|" << endl;
-		cout << "| 2  | Scoreboard              |" << endl;
-		cout << "|------------------------------|" << endl;
-		cout << "| 3  | Attendance list         |" << endl;
-		cout << "|------------------------------|" << endl;
-		cout << "| 4  | Return to previous menu |" << endl;
-		cout << "|------------------------------|" << endl;
-
-		choice = getChoice(1, 4);
-
-		switch (choice)
-		{
-		case 1:
-			showMenuOfCourse(academicYear, semester);
-			break;
-		case 2:
-			showMenuOfScoreboard(academicYear, semester);
-			break;
-		case 3:
-			showMenuOfAttendanceList(academicYear, semester);
-			break;
-		case 4:
-			return;
-		}
-	}
-}
-
-void showMenuOfStaff(Staff& staff)
-{
-	system("cls");
-
-	string academicYear, semester, filePath = PATH_DATA;
-	Staff* listStaffs = nullptr;
-	int choice, countStaff = 0, idx;
-
-	filePath += "Staff.txt";
-
-	while (true)
-	{
-		system("cls");
-		cout << "|------------------------------------------------|" << endl;
-		cout << "|                     STAFF                      |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-		cout << "| No |      Option                               |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-		cout << "| 1  | Class                                     |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-		cout << "| 2  | Create academic year and semester         |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-		cout << "| 3  | Enter existing academic year and semester |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-		cout << "| 4  | View profile info                         |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-		cout << "| 5  | Change password                           |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-		cout << "| 6  | Log out                                   |" << endl;
-		cout << "|------------------------------------------------|" << endl;
-
-		choice = getChoice(1, 6);
-
-		system("cls");
-
-		switch (choice)
-		{
-		case 1:
-			showMenuOfClass();
-			break;
-		case 2:
-			cin.ignore();
-			createAcademicYearsAndSemester();
-			showSubMenuOfStaff(staff, academicYear, semester);
-			break;
-		case 3:
-			cin.ignore();
-			getInputAcademicYearAndSemester(academicYear, semester);
-			showSubMenuOfStaff(staff, academicYear, semester);
-			break;
-		case 4:
-			viewStaffInfo(staff);
-			system("pause");
-			break;
-		case 5:
-			cin.ignore();
-			changePassword(staff.info.acc);
-
-			if (loadListStaffs(filePath, listStaffs, countStaff)) {
-				idx = findValue(listStaffs, countStaff, sizeof(Staff), &staff, isEqualStaff);
-				listStaffs[idx].info.acc.password = staff.info.acc.password;
-
-				saveListStaffs(filePath, listStaffs, countStaff);
-				delete[] listStaffs;
-				listStaffs = nullptr;
-			}
-
-			system("pause");
-			break;
-		case 6:
-			showMenu();
-			return;
-		}
-	}
-}
-
-void showMenuOfClass()
-{
-	int choice;
-
-	system("cls");
-
-	while (true)
-	{
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "|                      CLASS                      |" << endl;
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| No |                   Option                   |" << endl;
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 1  | Import students of a class from a csv file |" << endl;
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 2  | Add a new student to a class               |" << endl;
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 3  | Edit an existing student                   |" << endl;//thua
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 4  | Remove a student                           |" << endl;//thua
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 5  | Change students from one class to another  |" << endl;//thua
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 6  | View list of classes                       |" << endl;//thua
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 7  | View list of students in a class           |" << endl;//thua
-		cout << "|-------------------------------------------------|" << endl;
-		cout << "| 8  | Return to previous menu                    |" << endl;
-		cout << "|-------------------------------------------------|" << endl;
-
-		choice = getChoice(1, 8);
-
-		system("cls");
-
-		switch (choice)
-		{
-		case 1:
-			cin.ignore();
-			importClass();
-			break;
-		case 2:
-			addNewStudent();
-			break;
-		case 3:
-			editStudent();
-			break;
-		case 4:
-			removeStudent();
-			break;
-		case 5:
-			changeStudentClass();
-			break;
-		case 6:
-			viewClassList();
-			break;
-		case 7:
-			viewStudentsOfClass();
-			break;
-		case 8:
-			return;
-		}
-
-		system("pause");
-		system("cls");
-	}
-}
-
-	void showMenuOfCourse(const string& academicYear, const string& semester)
-	{
-		int choice;
-
-		while (true)
-		{
-			system("cls");
-
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "|                               COURSE                              |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| No |                          Option                              |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 1  | Create / delete / view academic years, and semesters         |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 2  | Import courses from a csv file                               |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 3  | Add a new course                                             |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 4  | Edit an existing course                                      |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 5  | Remove a course                                              |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 6  | Remove a specific student from a course                      |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 7  | Add a specific student to a course                           |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 8  | View list of courses in the current semester                 |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 9  | View list of students of a course                            |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 10 | View attendance list of a course                             |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 11 | Create / update / delete / view all lecturers                |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-			cout << "| 12 | Return to previous menu                                      |" << endl;
-			cout << "|-------------------------------------------------------------------|" << endl;
-
-			choice = getChoice(1, 12);
-
-			system("cls");
-
-			switch (choice)
-			{
-			case 1:
-				showFunctionsOfAcademicYearAndSemester();
-				break;
-			case 2:
-				cin.ignore();
-				importCourses(academicYear, semester);
-				break;
-			case 3:
-				addNewCourse(academicYear, semester);
-				break;
-			case 4:
-				editAnExistingCourse(academicYear, semester);
-				break;
-			case 5:
-				removeCourse(academicYear, semester);
-				break;
-			case 6:
-				removeStudentFromCourse(academicYear, semester);
-				break;
-			case 7:
-				addStudentToCourse(academicYear, semester);
-				break;
-			case 8:
-				viewListCourses(academicYear, semester);
-				break;
-			case 9:
-				viewListStudentsOfCourse(academicYear, semester);
-				break;
-			case 10:
-				viewAttendanceListOfCourse(academicYear, semester);
-				break;
-			case 11:
-				showFunctionsOfLecturer();
-				break;
-			case 12:
-				return;
-			}
-
-			if (choice != 1 && choice != 4 && choice != 11)
-				system("pause");
-		}
-	}
-
-	void showMenuOfScoreboard(const string& academicYear, const string& semester)
-	{
-		int choice;
-
-		while (true)
-		{
-			system("cls");
-
-			cout << "|-------------------------------------------------|" << endl;
-			cout << "|                    SCOREBOARD                   |" << endl;
-			cout << "|-------------------------------------------------|" << endl;
-			cout << "| No |                  Option                    |" << endl;
-			cout << "|-------------------------------------------------|" << endl;
-			cout << "| 1  | Search and view the scoreboard of a course |" << endl;
-			cout << "|-------------------------------------------------|" << endl;
-			cout << "| 2  | Export a scoreboard to a csv file          |" << endl;
-			cout << "|-------------------------------------------------|" << endl;
-			cout << "| 3  | Return to previous menu                    |" << endl;
-			cout << "|-------------------------------------------------|" << endl;
-
-			choice = getChoice(1, 3);
-
-			system("cls");
-
-			switch (choice)
-			{
-			case 1:
-				viewScoreboardOfCourse(academicYear, semester);
-				break;
-			case 2:
-				ExportScoreboardToCsv(academicYear, semester);
-				break;
-			case 3:
-				return;
-			}
-
-			system("pause");
-		}
-	}
-
-	void showMenuOfAttendanceList(const string& academicYear, const string& semester)
-	{
-		int choice;
-
-		while (true)
-		{
-			system("cls");
-
-			cout << "|--------------------------------------------------|" << endl;
-			cout << "|                  ATTENDANCE LIST                 |" << endl;
-			cout << "|--------------------------------------------------|" << endl;
-			cout << "| No |                    Option                   |" << endl;
-			cout << "|--------------------------------------------------|" << endl;
-			cout << "| 1  | Search and view attendance list of a course |" << endl;
-			cout << "|--------------------------------------------------|" << endl;
-			cout << "| 2  | Export a attendance list to a csv file      |" << endl;
-			cout << "|--------------------------------------------------|" << endl;
-			cout << "| 3  | Return to previous menu                     |" << endl;
-			cout << "|--------------------------------------------------|" << endl;
-
-			choice = getChoice(1, 3);
-
-			system("cls");
-
-			switch (choice)
-			{
-			case 1:
-				viewAttendanceListOfCourse(academicYear, semester);
-				break;
-			case 2:
-				ExportAttendanceListToCsv(academicYear, semester);
-				break;
-			case 3:
-				return;
-			}
-
-			system("pause");
-		}
-	}
-
-void showMenuOfLecturer(Lecturer& lec)
-{
-	string academicYear, semester, filePath = PATH_DATA;
-	Lecturer* listLecturers = nullptr;
-	int choice, countLecturer = 0;
-
-	filePath += "Lecturer.txt";
-
-	system("cls");
-	getInputAcademicYearAndSemester(academicYear, semester);
-
-	while (true)
-	{
-		system("cls");
-
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "|                      LECTURER                      |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| No |                   Option                      |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 1  | View list of courses in the current semester  |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 2  | View list of students of a course             |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 3  | View attendance list of a course              |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 4  | Edit an attendance                            |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 5  | Import scoreboard of a course from a csv file |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 6  | Edit grade of a student                       |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 7  | View a scoreboard                             |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 8  | View profile info                             |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 9  | Change password                               |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-		cout << "| 10 | Log out                                       |" << endl;
-		cout << "|----------------------------------------------------|" << endl;
-
-		choice = getChoice(1, 10);
-
-		system("cls");
-
-		switch (choice)
-		{
-		case 1:
-			viewListCourses(academicYear, semester, lec);
-			break;
-		case 2:
-			viewListStudentsOfCourse(academicYear, semester, lec);
-			break;
-		case 3:
-			viewAttendanceListOfCourseForLecturer(academicYear, semester, lec);
-			break;
-		case 4:
-			editAttendance(academicYear, semester, lec);
-			break;
-		case 5:
-			importScoreboardsOfCourse(academicYear, semester, lec);
-			break;
-		case 6:
-			editGradeStudent(academicYear, semester, lec);
-			break;
-		case 7:
-			viewScoreboardOfCourse(academicYear, semester, lec);
-			break;
-		case 8:
-			viewLecturerInfo(lec);
-			break;
-		case 9:
-			cin.ignore();
-			changePassword(lec.info.acc);
-
-			if (loadListLecturers(filePath, listLecturers, countLecturer)) {
-				int idx = findValue(listLecturers, countLecturer, sizeof(Lecturer), &lec, isEqualLecturer);
-				listLecturers[idx].info.acc.password = lec.info.acc.password;
-
-				saveListLecturers(filePath, listLecturers, countLecturer);
-				delete[] listLecturers;
-				listLecturers = nullptr;
-			}
-
-			break;
-		case 10:
-			showMenu();
-			return;
-		}
-
-		if (choice != 4)
-			system("pause");
-	}
-}
-
-void showMenuOfStudent(Student& st)
-{
-	string academicYear, semester, filePath;
-	Student* listStudents = nullptr;
-	int choice, countStudent = 0;
-
-	filePath = createClassDirectoryWithFileName(st.ClassName);
-
-	system("cls");
-	getInputAcademicYearAndSemester(academicYear, semester);
-
-	while (true)
-	{
-		system("cls");
-
-		cout << "|--------------------------------------|" << endl;
-		cout << "|                STUDENT               |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| No |             Option              |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| 1  | Check-in                        |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| 2  | View check-in result            |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| 3  | View schedules                  |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| 4  | View his/her scores of a course |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| 5  | View profile info               |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| 6  | Change password                 |" << endl;
-		cout << "|--------------------------------------|" << endl;
-		cout << "| 7  | Log out                         |" << endl;
-		cout << "|--------------------------------------|" << endl;
-
-		choice = getChoice(1, 7);
-
-		system("cls");
-
-		switch (choice)
-		{
-		case 1:
-			cin.ignore();
-			checkIn(academicYear, semester, st);
-			break;
-		case 2:
-			cin.ignore();
-			viewCheckInResult(academicYear, semester, st);
-			break;
-		case 3:
-			viewSchedule(academicYear, semester, st);
-			break;
-		case 4:
-			viewScores(academicYear, semester, st);
-			break;
-		case 5:
-			viewStudentInfo(st);
-			break;
-		case 6:
-			cin.ignore();
-			changePassword(st.info.acc);
-
-			if (loadStudentList(filePath, listStudents, countStudent)) {
-				int idx = findValue(listStudents, countStudent, sizeof(Student), &st, isEqualStudentId);
-				listStudents[idx].info.acc.password = st.info.acc.password;
-
-				saveStudentList(filePath, listStudents, countStudent);
-				delete[] listStudents;
-				listStudents = nullptr;
-			}
-
-			break;
-		case 7:
-			showMenu();
-			return;
 		}
 
 		system("pause");

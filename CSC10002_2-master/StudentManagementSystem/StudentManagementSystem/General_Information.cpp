@@ -371,7 +371,7 @@ void viewScoreboardOfStudent(const Student& st, const Scoreboard& score)
 }
 
 void viewAttendanceListStudent(const AttendanceList& attendList)
-{
+{	
 	string status;
 
 	cout << "|" << setfill('-') << setw(28) << "-" << "|" << endl;

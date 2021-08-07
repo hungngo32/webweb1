@@ -345,30 +345,30 @@ bool loadStudentList(const string& filePath, Student*& listStudents, int& countS
 
 bool saveStudentList(const string& filePath, Student* listStudents, const int& countStudent)
 {
-	ofstream fout(filePath);
-	int idx = 0, nStudents = 0;
+		ofstream fout(filePath);
+		int idx = 0, nStudents = 0;
 
-	if (!fout.is_open())
-		return false;
+		if (!fout.is_open())
+			return false;
 
-	// sort student list with ascending id.
-	//sortArray(listStudents, countStudent, sizeof(Student), ascendingStudentId);
-	sortArray_1(listStudents, countStudent);
-	for (int i = 0; i < countStudent; i++)
-		if (listStudents[i].status)
-			nStudents++;
+		// sort student list with ascending id.
+		//sortArray(listStudents, countStudent, sizeof(Student), ascendingStudentId);
+		sortArray_1(listStudents, countStudent);
+		for (int i = 0; i < countStudent; i++)
+			if (listStudents[i].status)
+				nStudents++;
 
-	fout << nStudents << endl;
-	for (int i = 0; i < nStudents; i++, idx++)
-	{
-		if (listStudents[idx].status)
-			saveStudent(fout, listStudents[idx]);
-		else
-			i--;
-	}
+		fout << nStudents << endl;
+		for (int i = 0; i < nStudents; i++, idx++)
+		{
+			if (listStudents[idx].status)
+				saveStudent(fout, listStudents[idx]);
+			else
+				i--;
+		}
 
-	fout.close();
-	return true;
+		fout.close();
+		return true;
 }
 
 bool saveListScoreboardsToCsv(const string& filePath, StudentCourseInformation* listInfo, const int& countStudent)
